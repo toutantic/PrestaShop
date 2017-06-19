@@ -25,21 +25,20 @@ function e_arrow() { printf "\n\n${c_bold}${c_purple}➜ %s${c_reset}\n" "$@"
 
 
 e_arrow "Replacing version number in files"
-node replace_version.js --version $versiong
+node replace_version.js --version $version
 
 
 e_arrow "Downloading CLDR"
-node download_cldr.js
-
+curl http://i18n.prestashop.com/cldr/cldr.zip -o $rootPath/translations/cldr.zip
 
 e_arrow "Installing PHP dependencies with composer"
 cd $rootPath; composer install;
 
 
 e_arrow "Building assets with NPM"
-cd $rootPath; cd themes/classic/_dev; npm update; npm run build;
-cd $rootPath; cd admin-dev/themes/new-theme; npm update; npm run build;
-cd $rootPath; cd admin-dev/themes/default; npm update; npm run build;
+cd $rootPath; cd themes/classic/_dev; npm install; npm run build;
+cd $rootPath; cd admin-dev/themes/new-theme; npm install; npm run build;
+cd $rootPath; cd admin-dev/themes/default; npm install; npm run build;
 
 
 e_arrow "Removing folders and files"
@@ -58,9 +57,3 @@ rm -f .travis.yml
 
 rm -rf app/cache; mkdir app/cache;
 rm -rf app/logs; mkdir app/logs;
-
-read -p "Do you want to delete the .git directory? " -n 1 -r
-if [[ $REPLY =~ ^[Yy]$ ]]
-then
-    rm -rf .git
-fi
